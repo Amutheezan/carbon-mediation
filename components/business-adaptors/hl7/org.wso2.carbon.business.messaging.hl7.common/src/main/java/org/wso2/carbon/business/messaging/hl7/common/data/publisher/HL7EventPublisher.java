@@ -30,6 +30,7 @@ import org.wso2.carbon.databridge.agent.exception.DataEndpointAgentConfiguration
 import org.wso2.carbon.databridge.agent.exception.DataEndpointAuthenticationException;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointConfigurationException;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointException;
+import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.agent.util.DataEndpointConstants;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
@@ -56,12 +57,12 @@ public class HL7EventPublisher {
 
 	public void publish(MessageData message) throws HL7Exception {
 
-		List<Object> correlationData = EventConfigUtil.getCorrelationData(message);
-		List<Object> metaData = EventConfigUtil.getMetaData(message);
-		List<Object> payLoadData = EventConfigUtil.getEventData(message);
+		List[] correlationData = EventConfigUtil.getCorrelationData(message);
+		List[] metaData = EventConfigUtil.getMetaData(message);
+		List[] payLoadData = EventConfigUtil.getEventData(message);
 		Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
 		StreamDefinition streamDef = null;
-		//Event event = new Event(streamId, System.currentTimeMillis(), metaData, null,eventData);
+		Event event = new Event(streamId, System.currentTimeMillis(), metaData, correlationData,payLoadData);
 
 		// Has to use try-publish for asynchronous publishing
 		//EventPublishConfigHolder.getInstance().getPublisherService().publish(event);
@@ -131,8 +132,8 @@ public class HL7EventPublisher {
 	}
 
 	private void loadBalancerPublisher(EventPublisherConfig eventPublisherConfig, StreamDefinition streamDef,
-	                                   String key, List<Object> correlationData, List<Object> metaData,
-	                                   List<Object> payLoadData, Map<String, String> arbitraryDataMap)
+	                                   String key, List[] correlationData, List[] metaData,
+	                                   List[] payLoadData, Map<String, String> arbitraryDataMap)
 			throws HL7Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("Load balancing receiver mode working.");
@@ -183,9 +184,9 @@ public class HL7EventPublisher {
 		}
 	}
 
-	private Object[] getObjectArray(List<Object> list) {
-		if (list.size() > 0) {
-			return list.toArray();
+	private Object[] getObjectArray(List[] list) {
+		if (list.length > 0) {
+			return list;
 		}
 		return null;
 	}

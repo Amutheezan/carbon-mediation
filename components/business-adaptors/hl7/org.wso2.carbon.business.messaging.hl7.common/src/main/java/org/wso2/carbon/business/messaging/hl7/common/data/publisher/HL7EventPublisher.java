@@ -61,7 +61,10 @@ public class HL7EventPublisher {
 		List<Object> payLoadData = EventConfigUtil.getEventData(message);
 		Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
 		StreamDefinition streamDef = null;
+		//Event event = new Event(streamId, System.currentTimeMillis(), metaData, null,eventData);
 
+		// Has to use try-publish for asynchronous publishing
+		//EventPublishConfigHolder.getInstance().getPublisherService().publish(event);
 		try {
 			streamDef = StreamDefUtil.getStreamDefinition();
 		} catch (MalformedStreamDefinitionException e) {

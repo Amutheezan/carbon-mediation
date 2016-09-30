@@ -16,14 +16,61 @@
 package org.wso2.carbon.business.messaging.hl7.common.data;
 
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
-
+import org.wso2.carbon.event.stream.core.EventStreamService;
+import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.ConfigurationContextService;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * This class holds data publisher instances
- */
 public class EventPublishConfigHolder {
+
+
+    private EventStreamService publisherService;
+    private RegistryService registryService;
+    private ConfigurationContextService contextService;
+    private boolean isGlobalStatisticsEnabled;
+
+    private static EventPublishConfigHolder serviceHolder = new EventPublishConfigHolder();
+
+    private EventPublishConfigHolder() {
+
+    }
+
+    public static EventPublishConfigHolder getInstance() {
+        return serviceHolder;
+    }
+
+    public EventStreamService getPublisherService() {
+        return publisherService;
+    }
+
+    public void setPublisherService(EventStreamService publisherService) {
+        this.publisherService = publisherService;
+    }
+
+    public RegistryService getRegistryService() {
+        return registryService;
+    }
+
+    public void setRegistryService(RegistryService registryService) {
+        this.registryService = registryService;
+    }
+
+    public ConfigurationContextService getContextService() {
+        return contextService;
+    }
+
+    public void setContextService(ConfigurationContextService contextService) {
+        this.contextService = contextService;
+    }
+
+    public boolean isGlobalStatisticsEnabled() {
+        return isGlobalStatisticsEnabled;
+    }
+
+    public void setGlobalStatisticsEnabled(boolean globalStatisticsEnabled) {
+        isGlobalStatisticsEnabled = globalStatisticsEnabled;
+    }
+
 
     private static Map<String, EventPublisherConfig> eventPublisherConfigMap
             = new HashMap<String, EventPublisherConfig>();

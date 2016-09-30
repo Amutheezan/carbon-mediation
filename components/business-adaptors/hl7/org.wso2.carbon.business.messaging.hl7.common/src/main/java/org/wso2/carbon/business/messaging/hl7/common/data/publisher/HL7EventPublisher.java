@@ -18,6 +18,7 @@ package org.wso2.carbon.business.messaging.hl7.common.data.publisher;
 import ca.uhn.hl7v2.HL7Exception;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.business.messaging.hl7.common.HL7Constants;
 import org.wso2.carbon.business.messaging.hl7.common.data.EventPublishConfigHolder;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
@@ -44,8 +45,8 @@ import java.util.Map;
 public class HL7EventPublisher {
 
 	public static final String UNDERSCORE = "_";
-
 	private static Log log = LogFactory.getLog(HL7EventPublisher.class);
+	private static String streamId = DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME, HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
 
 	private ServerConfig serverConfig;
 

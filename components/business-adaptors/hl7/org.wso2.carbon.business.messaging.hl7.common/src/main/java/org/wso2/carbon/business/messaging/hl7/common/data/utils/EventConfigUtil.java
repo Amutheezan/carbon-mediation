@@ -20,9 +20,7 @@ import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This is the utility class for fetching event data
- */
+
 public class EventConfigUtil {
 
     public static List[] getCorrelationData(MessageData message) {
@@ -38,7 +36,7 @@ public class EventConfigUtil {
         return metaData;
     }
 
-    public static List[] getEventData(MessageData message) {
+    public static List[] getPayloadData(MessageData message) {
     	List[] payloadData = new List[7];
         payloadData[1].add(message.getPayload());
         payloadData[2].add(message.getType());

@@ -19,8 +19,10 @@ import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherCon
 import org.wso2.carbon.event.stream.core.EventStreamService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.ConfigurationContextService;
+
 import java.util.HashMap;
 import java.util.Map;
+
 public class EventPublishConfigHolder {
 
 
@@ -82,4 +84,5 @@ public class EventPublishConfigHolder {
     public static Map<String, EventPublisherConfig> getEventPublisherConfigMap() {
         return eventPublisherConfigMap;
     }
+
 }

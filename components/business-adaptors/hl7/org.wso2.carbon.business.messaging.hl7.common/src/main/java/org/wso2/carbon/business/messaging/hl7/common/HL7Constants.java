@@ -75,7 +75,7 @@ public class HL7Constants {
 
     public static final int HL7_DEFAULT_IDLE_THREAD_KEEPALIVE = 10000;
 
-    public static final String HL7_PUBLISHER_STREAM_NAME = "bam_hl7_data_publisher_store";
+    public static final String HL7_PUBLISHER_STREAM_NAME = "das_hl7_data_publisher_store";
 
     public static final String HL7_PUBLISHER_STREAM_VERSION = "1.0.0";
 
@@ -136,8 +136,6 @@ public class HL7Constants {
 		public static final String XML = "XML";
 		
 	}
-
-	//HL7 Transport parameters
 
 	public static final String HL7_TRANSPORT_TIMEOUT = "transport.hl7.TimeOut";
 

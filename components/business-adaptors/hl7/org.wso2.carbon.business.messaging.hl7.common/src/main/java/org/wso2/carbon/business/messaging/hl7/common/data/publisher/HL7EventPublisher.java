@@ -19,33 +19,25 @@ import ca.uhn.hl7v2.HL7Exception;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.business.messaging.hl7.common.HL7Constants;
-import org.wso2.carbon.business.messaging.hl7.common.data.EventPublishConfigHolder;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.ServerConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.utils.EventConfigUtil;
-import org.wso2.carbon.business.messaging.hl7.common.data.utils.StreamDefUtil;
-import org.wso2.carbon.databridge.agent.DataPublisher;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointAgentConfigurationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointAuthenticationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointConfigurationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointException;
-import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.databridge.agent.util.DataEndpointConstants;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
-import org.wso2.carbon.databridge.commons.exception.TransportException;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 
 import java.util.List;
 import java.util.Map;
 
+//import static javafx.scene.input.KeyCode.UNDERSCORE;
+
 /**
  * This class represents HL7 data publisher
  */
+
 public class HL7EventPublisher {
 
-	public static final String UNDERSCORE = "_";
+	private static final String UNDERSCORE= "_";
 	private static Log log = LogFactory.getLog(HL7EventPublisher.class);
 	private static String streamId = DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME, HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
 
@@ -55,133 +47,20 @@ public class HL7EventPublisher {
 		this.serverConfig = serverConfig;
 	}
 
-	public void publish(MessageData message) throws HL7Exception {
-
-		List[] correlationData = EventConfigUtil.getCorrelationData(message);
-		List[] metaData = EventConfigUtil.getMetaData(message);
-		List[] payLoadData = EventConfigUtil.getEventData(message);
+	public void publish(MessageData message)throws HL7Exception{
+		List[] metaData= EventConfigUtil.getMetaData(message);
+		List[] correlationData=EventConfigUtil.getCorrelationData(message);
+		List[] payLoadData=EventConfigUtil.getPayloadData(message);
 		Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
 		StreamDefinition streamDef = null;
-		Event event = new Event(streamId, System.currentTimeMillis(), metaData, correlationData,payLoadData);
 
-		// Has to use try-publish for asynchronous publishing
-		//EventPublishConfigHolder.getInstance().getPublisherService().publish(event);
-		try {
-			streamDef = StreamDefUtil.getStreamDefinition();
-		} catch (MalformedStreamDefinitionException e) {
-			log.error("Unable to create HL7 StreamDefinition : " + e.getMessage(), e);
-		}
-		if (streamDef != null) {
-			String key = serverConfig.getUrl() + UNDERSCORE + serverConfig.getUsername() + UNDERSCORE +
-			             serverConfig.getPassword();
-			EventPublisherConfig eventPublisherConfig = EventPublishConfigHolder.getEventPublisherConfig(key);
-			if (serverConfig.isLoadBalancingConfig()) {
-				loadBalancerPublisher(eventPublisherConfig, streamDef, key, correlationData, metaData, payLoadData,
-				                      arbitraryDataMap);
-			} else {
-				if (log.isDebugEnabled()) {
-					log.debug("single node receiver mode working.");
-				}
-				if (eventPublisherConfig == null) {
-					if (log.isDebugEnabled()) {
-						log.debug("Newly creating publisher configuration.");
-					}
-					synchronized (HL7EventPublisher.class) {
-						eventPublisherConfig = new EventPublisherConfig();
-						DataPublisher asyncDataPublisher;
-						try {
-							if (serverConfig.getSecureUrl() != null) {
-								asyncDataPublisher = new DataPublisher(DataEndpointConstants.THRIFT_DATA_AGENT_TYPE,
-								                                       serverConfig.getUrl(),
-								                                       serverConfig.getSecureUrl(),
-								                                       serverConfig.getUsername(),
-								                                       serverConfig.getPassword());
-							} else {
-								asyncDataPublisher =
-										new DataPublisher(serverConfig.getUrl(), serverConfig.getUsername(),
-										                  serverConfig.getPassword());
-							}
-						} catch (DataEndpointAgentConfigurationException | DataEndpointException |
-								DataEndpointConfigurationException | DataEndpointAuthenticationException |
-								TransportException e) {
-							String errorMsg = "Error occurred while creating data publisher";
-							log.error(errorMsg);
-							throw new HL7Exception(errorMsg, e);
 
-						}
-						if (log.isDebugEnabled()) {
-							log.debug("Created stream definition.");
-						}
-						eventPublisherConfig.setAsyncDataPublisher(asyncDataPublisher);
-						if (log.isDebugEnabled()) {
-							log.debug("Adding config info to map.");
-						}
-						EventPublishConfigHolder.getEventPublisherConfigMap().put(key, eventPublisherConfig);
-					}
-				}
-				DataPublisher asyncDataPublisher = eventPublisherConfig.getAsyncDataPublisher();
-				asyncDataPublisher
-						.publish(DataBridgeCommonsUtils.generateStreamId(streamDef.getName(), streamDef.getVersion()),
-						         getObjectArray(metaData), getObjectArray(correlationData), getObjectArray(payLoadData),
-						         arbitraryDataMap);
-				if (log.isDebugEnabled()) {
-					log.debug("Successfully published data.");
-				}
-			}
-		}
 	}
-
 	private void loadBalancerPublisher(EventPublisherConfig eventPublisherConfig, StreamDefinition streamDef,
-	                                   String key, List[] correlationData, List[] metaData,
-	                                   List[] payLoadData, Map<String, String> arbitraryDataMap)
+									   String key, List[] correlationData, List[] metaData,
+									   List[] payLoadData, Map<String, String> arbitraryDataMap)
 			throws HL7Exception {
-		if (log.isDebugEnabled()) {
-			log.debug("Load balancing receiver mode working.");
-		}
-		if (eventPublisherConfig == null) {
-			if (log.isDebugEnabled()) {
-				log.debug("Newly creating publisher configuration.");
-			}
-			synchronized (HL7EventPublisher.class) {
-				eventPublisherConfig = new EventPublisherConfig();
-				DataPublisher loadBalancingDataPublisher;
-				try {
-					if (serverConfig.getSecureUrl() != null) {
-						loadBalancingDataPublisher = new DataPublisher(DataEndpointConstants.THRIFT_DATA_AGENT_TYPE,
-						                                               serverConfig.getUrl(),
-						                                               serverConfig.getSecureUrl(),
-						                                               serverConfig.getUsername(),
-						                                               serverConfig.getPassword());
-					} else {
-						loadBalancingDataPublisher =
-								new DataPublisher(serverConfig.getUrl(), serverConfig.getUsername(),
-								                  serverConfig.getPassword());
-					}
-				} catch (DataEndpointAgentConfigurationException | DataEndpointException
-						| DataEndpointConfigurationException | DataEndpointAuthenticationException
-						| TransportException e) {
-					String errorMsg = "Error occurred while creating data publisher";
-					log.error(errorMsg);
-					throw new HL7Exception(errorMsg, e);
-				}
-				if (log.isDebugEnabled()) {
-					log.debug("Created stream definition.");
-				}
-				eventPublisherConfig.setLoadBalancingDataPublisher(loadBalancingDataPublisher);
-				if (log.isDebugEnabled()) {
-					log.debug("Adding config info to map.");
-				}
-				EventPublishConfigHolder.getEventPublisherConfigMap().put(key, eventPublisherConfig);
-			}
-		}
-		DataPublisher loadBalancingDataPublisher = eventPublisherConfig.getLoadBalancingDataPublisher();
-		loadBalancingDataPublisher
-				.publish(DataBridgeCommonsUtils.generateStreamId(streamDef.getName(), streamDef.getVersion()),
-				         getObjectArray(metaData), getObjectArray(correlationData), getObjectArray(payLoadData),
-				         arbitraryDataMap);
-		if (log.isDebugEnabled()) {
-			log.debug("Successfully published data.");
-		}
+
 	}
 
 	private Object[] getObjectArray(List[] list) {

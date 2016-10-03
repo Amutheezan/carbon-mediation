@@ -22,7 +22,6 @@ import org.wso2.carbon.business.messaging.hl7.common.HL7Constants;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.ServerConfig;
-import org.wso2.carbon.business.messaging.hl7.common.data.utils.EventConfigUtil;
 import org.wso2.carbon.databridge.commons.StreamDefinition;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 
@@ -38,6 +37,7 @@ import java.util.Map;
 public class HL7EventPublisher {
 
 	private static final String UNDERSCORE= "_";
+	private static final String EVENT_TYPE = "wso2event";
 	private static Log log = LogFactory.getLog(HL7EventPublisher.class);
 	private static String streamId = DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME, HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
 
@@ -47,12 +47,8 @@ public class HL7EventPublisher {
 		this.serverConfig = serverConfig;
 	}
 
-	public void publish(MessageData message)throws HL7Exception{
-		List[] metaData= EventConfigUtil.getMetaData(message);
-		List[] correlationData=EventConfigUtil.getCorrelationData(message);
-		List[] payLoadData=EventConfigUtil.getPayloadData(message);
-		Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
-		StreamDefinition streamDef = null;
+	public void publish(MessageData messageData)throws HL7Exception{
+
 
 
 	}

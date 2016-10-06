@@ -20,24 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.business.messaging.hl7.common.HL7Constants;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
-import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.ServerConfig;
-import org.wso2.carbon.databridge.commons.StreamDefinition;
+import org.wso2.carbon.business.messaging.hl7.common.data.utils.EventConfigUtil;
+import org.wso2.carbon.business.messaging.hl7.common.internal.HL7MessageComponent;
+import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 import java.util.List;
-import java.util.Map;
 
-//import static javafx.scene.input.KeyCode.UNDERSCORE;
-
-/**
- * This class represents HL7 data publisher
- */
 
 public class HL7EventPublisher {
 
-	private static final String UNDERSCORE= "_";
-	private static final String EVENT_TYPE = "wso2event";
+
 	private static Log log = LogFactory.getLog(HL7EventPublisher.class);
 	private static String streamId = DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME, HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
 
@@ -47,22 +42,19 @@ public class HL7EventPublisher {
 		this.serverConfig = serverConfig;
 	}
 
-	public void publish(MessageData messageData)throws HL7Exception{
-
-
+	public void publish(MessageData messageData)throws HL7Exception {
+		List<Object> correlationData = EventConfigUtil.getCorrelationData(messageData);
+		List<Object> metaData = EventConfigUtil.getMetaData(messageData);
+		List<Object> payLoadData = EventConfigUtil.getEventData(messageData);
+		EventStreamService eventStreamService= HL7MessageComponent.getEventStreamService();
+		Event event=new Event();
+		event.setTimeStamp(System.currentTimeMillis());
+		event.setStreamId(streamId);
+		event.setCorrelationData(correlationData.toArray());
+		event.setMetaData(metaData.toArray());
+		event.setPayloadData(payLoadData.toArray());
+		eventStreamService.publish(event);
 
 	}
-	private void loadBalancerPublisher(EventPublisherConfig eventPublisherConfig, StreamDefinition streamDef,
-									   String key, List[] correlationData, List[] metaData,
-									   List[] payLoadData, Map<String, String> arbitraryDataMap)
-			throws HL7Exception {
 
-	}
-
-	private Object[] getObjectArray(List[] list) {
-		if (list.length > 0) {
-			return list;
-		}
-		return null;
-	}
 }

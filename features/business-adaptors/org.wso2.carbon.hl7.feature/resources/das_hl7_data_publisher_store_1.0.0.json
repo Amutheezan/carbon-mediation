@@ -1,5 +1,5 @@
 {
-  "name": "org.wso2.carbon.das.hl7.data.publisher.store",
+  "name": "das_hl7_data_publisher_store",
   "version": "1.0.0",
   "nickName": "",
   "description": "",

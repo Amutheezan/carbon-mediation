@@ -17,34 +17,37 @@ package org.wso2.carbon.business.messaging.hl7.common.data.utils;
 
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * This is the utility class for fetching event data
+ */
 public class EventConfigUtil {
 
-    public static List[] getCorrelationData(MessageData message) {
-        List[] correlationData = new List[1];
-        correlationData[1].add(message.getActivityId());
+    public static List<Object> getCorrelationData(MessageData message) {
+        List<Object> correlationData = new ArrayList<Object>(1);
+        correlationData.add(message.getActivityId());
         return correlationData;
     }
 
-    public static List[] getMetaData(MessageData message) {
-    	List[] metaData=new  List[2];
-        metaData[1].add(message.getHost());
-        metaData[2].add(message.getServerName());
+    public static List<Object> getMetaData(MessageData message) {
+        List<Object> metaData = new ArrayList<Object>(2);
+        metaData.add(message.getHost());
+        metaData.add(message.getServerName());
         return metaData;
     }
 
-    public static List[] getPayloadData(MessageData message) {
-    	List[] payloadData = new List[7];
-        payloadData[1].add(message.getPayload());
-        payloadData[2].add(message.getType());
-        payloadData[3].add(message.getTimestamp());
-        payloadData[4].add(message.getMsgDirection());
-        payloadData[5].add(message.getServiceName());
-        payloadData[6].add(message.getOpName());
-        payloadData[7].add(message.getStatus());
+    public static List<Object> getEventData(MessageData message) {
+        List<Object> payloadData = new ArrayList<Object>(7);
+        payloadData.add(message.getPayload());
+        payloadData.add(message.getType());
+        payloadData.add(message.getTimestamp());
+        payloadData.add(message.getMsgDirection());
+        payloadData.add(message.getServiceName());
+        payloadData.add(message.getOpName());
+        payloadData.add(message.getStatus());
         return payloadData;
     }
 

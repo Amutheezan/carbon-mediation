@@ -15,9 +15,6 @@
  */
 package org.wso2.carbon.business.messaging.hl7.common.data.conf;
 
-/**
- * This class holds BAM server connection details
- */
 public class ServerConfig {
 
     public static final String URL_SEPARATOR = ",";

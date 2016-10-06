@@ -1,0 +1,5 @@
+instructions.configure = \
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/server/eventpublishers/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/server/eventstreams/);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.hl7_${feature.version}/HL7EventPublisher.xml,target:${installFolder}/../../deployment/server/eventpublishers/HL7EventPublisher.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.hl7_${feature.version}/das_hl7_data_publisher_store_1.0.0.json,target:${installFolder}/../../deployment/server/eventstreams/das_hl7_data_publisher_store_1.0.0.json,overwrite:true);\

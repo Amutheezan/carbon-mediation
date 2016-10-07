@@ -15,29 +15,21 @@
  */
 package org.wso2.carbon.business.messaging.hl7.common.data.conf;
 
-import org.wso2.carbon.databridge.agent.DataPublisher;
+import org.wso2.carbon.event.stream.core.EventStreamService;
 
 /**
  * This class represents data publisher instances
  */
 public class EventPublisherConfig {
 
-	private DataPublisher asyncDataPublisher;
-	private DataPublisher loadBalancingDataPublisher;
-
-	public DataPublisher getAsyncDataPublisher() {
-		return asyncDataPublisher;
+	private EventStreamService eventStreamService;
+	public EventStreamService getEventStreamService(){
+		return  eventStreamService;
 	}
 
-	public void setAsyncDataPublisher(DataPublisher asyncDataPublisher) {
-		this.asyncDataPublisher = asyncDataPublisher;
+	public void setEventStreamService(EventStreamService eventStreamService) {
+		this.eventStreamService = eventStreamService;
 	}
 
-	public DataPublisher getLoadBalancingDataPublisher() {
-		return loadBalancingDataPublisher;
-	}
 
-	public void setLoadBalancingDataPublisher(DataPublisher loadBalancingDataPublisher) {
-		this.loadBalancingDataPublisher = loadBalancingDataPublisher;
-	}
 }

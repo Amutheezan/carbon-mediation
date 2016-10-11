@@ -29,8 +29,8 @@ import ca.uhn.hl7v2.parser.DefaultXMLParser;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
 import ca.uhn.hl7v2.util.idgenerator.InMemoryIDGenerator;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -45,7 +45,6 @@ import org.wso2.carbon.business.messaging.hl7.common.HL7Constants.MessageEncodin
 import org.wso2.carbon.business.messaging.hl7.common.HL7Constants.MessageType;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.HL7MessagePublisherConfig;
-import org.wso2.carbon.business.messaging.hl7.common.data.conf.ServerConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.publisher.HL7EventPublisher;
 
 import javax.xml.namespace.QName;
@@ -106,7 +105,8 @@ public class HL7ProcessingContext {
         this.isPassThroughInvalidMessages = passThroughInvalidMessages;
         this.isBuildRawMessages = buildRawMessages;
 
-        this.eventPublisher = new HL7EventPublisher(new ServerConfig(secureServerUrl,serverUrl, serverUsername,serverPassword));
+        this.eventPublisher = new HL7EventPublisher();
+        		//new ServerConfig(secureServerUrl,serverUrl, serverUsername,serverPassword));
 
 		if (conformanceProfileURL != null) {
 		    this.conformanceProfile = this.createConformanceProfile(conformanceProfileURL);

@@ -16,19 +16,11 @@
 package org.wso2.carbon.business.messaging.hl7.common.data.publisher;
 
 import ca.uhn.hl7v2.HL7Exception;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.business.messaging.hl7.common.HL7Constants;
-import org.wso2.carbon.business.messaging.hl7.common.data.EventPublishConfigHolder;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
-import org.wso2.carbon.business.messaging.hl7.common.data.conf.EventPublisherConfig;
-import org.wso2.carbon.business.messaging.hl7.common.data.conf.ServerConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.utils.EventConfigUtil;
-import org.wso2.carbon.business.messaging.hl7.common.data.utils.StreamDefUtil;
 import org.wso2.carbon.business.messaging.hl7.common.internal.HL7MessageComponent;
 import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.databridge.commons.StreamDefinition;
-import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionException;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 
@@ -40,16 +32,16 @@ import java.util.Map;
  */
 public class HL7EventPublisher {
 
-    public static final String UNDERSCORE = "_";
-
-    private static Log log = LogFactory.getLog(HL7EventPublisher.class);
-
-    private ServerConfig serverConfig;
     private static  String streamId=DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME,HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
 
-    public HL7EventPublisher(ServerConfig serverConfig) {
+   /*
+   public static final String UNDERSCORE = "_";
+   private static Log log = LogFactory.getLog(HL7EventPublisher.class);
+   private ServerConfig serverConfig;
+   public HL7EventPublisher(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
-    }
+   }
+   */
 
     public void publish(MessageData message) throws HL7Exception {
 
@@ -57,7 +49,6 @@ public class HL7EventPublisher {
         List<Object> metaData = EventConfigUtil.getMetaData(message);
         List<Object> payLoadData = EventConfigUtil.getEventData(message);
         Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
-        StreamDefinition streamDef = null;
         Event event=new Event();
         event.setTimeStamp(System.currentTimeMillis());
         event.setStreamId(streamId);
@@ -65,7 +56,9 @@ public class HL7EventPublisher {
         event.setMetaData(metaData.toArray());
         event.setPayloadData(payLoadData.toArray());
         event.setArbitraryDataMap(arbitraryDataMap);
-
+        EventStreamService eventStreamService= HL7MessageComponent.getEventStreamService();
+        eventStreamService.publish(event);
+/*
         try {
             streamDef = StreamDefUtil.getStreamDefinition();
         } catch (MalformedStreamDefinitionException e) {
@@ -105,6 +98,7 @@ public class HL7EventPublisher {
                 }
             }
         }
+*/
     }
 
 

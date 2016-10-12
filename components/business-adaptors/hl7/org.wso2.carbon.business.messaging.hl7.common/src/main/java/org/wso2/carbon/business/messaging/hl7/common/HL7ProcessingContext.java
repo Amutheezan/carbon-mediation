@@ -306,7 +306,7 @@ public class HL7ProcessingContext {
         } catch (HL7Exception e) {
             log.error("Error while encoding for RAW HL7 message in EDI format");
         }
-    }
+	}
 
     public void publishMessage(Message message, MessageContext msgCtx) {
            if (isPublisherEnabled()) {
@@ -316,7 +316,7 @@ public class HL7ProcessingContext {
 				hl7PublisherConfig = new HL7MessagePublisherConfig();
                 MessageData messageData = hl7PublisherConfig.createMessage(message, msgCtx);
                 eventPublisher.publish(messageData);
-            } catch (HL7Exception e) {
+            }catch (HL7Exception e) {
                 log.error("Error in publishing the message", e);
             }finally {
 				PrivilegedCarbonContext.endTenantFlow();
@@ -325,14 +325,13 @@ public class HL7ProcessingContext {
 
     }
 
-    public Message createAck(Message hl7Msg) throws HL7Exception {
-		try {
-		    return hl7Msg.generateACK();
-		} catch (IOException e) {
-			throw new HL7Exception(e);
-		}
+public Message createAck(Message hl7Msg) throws HL7Exception {
+	try {
+		return hl7Msg.generateACK();
+	} catch (IOException e) {
+		throw new HL7Exception(e);
 	}
-	
+}
 	public Message createNack(Message hl7Msg, String errorMsg) throws HL7Exception {
 		if (errorMsg == null) {
 			errorMsg = "";
@@ -400,14 +399,15 @@ public class HL7ProcessingContext {
                     applicationResponses.clear();
                 }
                 msg = this.createAck(hl7Msg);
-                return msg;
+               return msg;
+				//return null;
             } else {
                 MessageContext requestMessageCtx = ctx.getOperationContext()
                         .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
                 Message requesthl7message = xmlPayloadToHL7Message(requestMessageCtx);
-                msg = this.createAck(requesthl7message);
-                applicationResponses.offer(msg);
+				msg = this.createAck(requesthl7message);
+               applicationResponses.offer(msg);
             }
         } else if (HL7Constants.HL7_RESULT_MODE_NACK.equals(resultMode)) {
             String nackMessage = (String) ctx.getProperty(HL7Constants.HL7_NACK_MESSAGE);
@@ -524,4 +524,5 @@ public class HL7ProcessingContext {
 	public void setTimeOutVal(int timeOut) {
 	    this.timeOutVal = timeOut;
     }
+
 }

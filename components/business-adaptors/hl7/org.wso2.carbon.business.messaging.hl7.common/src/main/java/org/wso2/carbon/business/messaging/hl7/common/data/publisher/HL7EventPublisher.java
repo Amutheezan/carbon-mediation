@@ -33,11 +33,14 @@ import java.util.Map;
 public class HL7EventPublisher {
 
     private static  String streamId=DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME,HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
+
     public void publish(MessageData message) throws HL7Exception {
+
         List<Object> correlationData = EventConfigUtil.getCorrelationData(message);
         List<Object> metaData = EventConfigUtil.getMetaData(message);
         List<Object> payLoadData = EventConfigUtil.getEventData(message);
         Map<String, String> arbitraryDataMap = EventConfigUtil.getExtractedDataMap(message);
+
         Event event=new Event();
         event.setTimeStamp(System.currentTimeMillis());
         event.setStreamId(streamId);
@@ -45,8 +48,10 @@ public class HL7EventPublisher {
         event.setMetaData(metaData.toArray());
         event.setPayloadData(payLoadData.toArray());
         event.setArbitraryDataMap(arbitraryDataMap);
+
         EventStreamService eventStreamService= HL7MessageComponent.getEventStreamService();
         eventStreamService.publish(event);
+
     }
 }
 

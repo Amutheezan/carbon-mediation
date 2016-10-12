@@ -33,18 +33,7 @@ import java.util.Map;
 public class HL7EventPublisher {
 
     private static  String streamId=DataBridgeCommonsUtils.generateStreamId(HL7Constants.HL7_PUBLISHER_STREAM_NAME,HL7Constants.HL7_PUBLISHER_STREAM_VERSION);
-
-   /*
-   public static final String UNDERSCORE = "_";
-   private static Log log = LogFactory.getLog(HL7EventPublisher.class);
-   private ServerConfig serverConfig;
-   public HL7EventPublisher(ServerConfig serverConfig) {
-        this.serverConfig = serverConfig;
-   }
-   */
-
     public void publish(MessageData message) throws HL7Exception {
-
         List<Object> correlationData = EventConfigUtil.getCorrelationData(message);
         List<Object> metaData = EventConfigUtil.getMetaData(message);
         List<Object> payLoadData = EventConfigUtil.getEventData(message);
@@ -58,51 +47,7 @@ public class HL7EventPublisher {
         event.setArbitraryDataMap(arbitraryDataMap);
         EventStreamService eventStreamService= HL7MessageComponent.getEventStreamService();
         eventStreamService.publish(event);
-/*
-        try {
-            streamDef = StreamDefUtil.getStreamDefinition();
-        } catch (MalformedStreamDefinitionException e) {
-            log.error("Unable to create HL7 StreamDefinition : " + e.getMessage(), e);
-        }
-        if (streamDef != null) {
-            String key = serverConfig.getUrl() + UNDERSCORE + serverConfig.getUsername() + UNDERSCORE +
-                    serverConfig.getPassword();
-            EventPublisherConfig eventPublisherConfig = EventPublishConfigHolder.getEventPublisherConfig(key);
-            if (serverConfig.isLoadBalancingConfig()) {
-               //do Nothing
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("single node receiver mode working.");
-                }
-                if (eventPublisherConfig == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Newly creating publisher configuration.");
-                    }
-                    synchronized (HL7EventPublisher.class) {
-                        eventPublisherConfig = new EventPublisherConfig();
-                        EventStreamService eventStreamService= HL7MessageComponent.getEventStreamService();
-                        eventStreamService.publish(event);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Created stream definition.");
-                        }
-                        eventPublisherConfig.setEventStreamService(eventStreamService);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Adding config info to map.");
-                        }
-                        EventPublishConfigHolder.getEventPublisherConfigMap().put(key, eventPublisherConfig);
-                    }
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Successfully published data.");
-                }
-            }
-        }
-*/
     }
-
-
-
 }
 
 

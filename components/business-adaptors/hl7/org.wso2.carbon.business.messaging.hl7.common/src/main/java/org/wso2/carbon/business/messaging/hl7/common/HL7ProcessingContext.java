@@ -46,6 +46,7 @@ import org.wso2.carbon.business.messaging.hl7.common.HL7Constants.MessageType;
 import org.wso2.carbon.business.messaging.hl7.common.data.MessageData;
 import org.wso2.carbon.business.messaging.hl7.common.data.conf.HL7MessagePublisherConfig;
 import org.wso2.carbon.business.messaging.hl7.common.data.publisher.HL7EventPublisher;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class HL7ProcessingContext {
     private HL7EventPublisher  eventPublisher;
 
 
-	
+	private int tenantId = -1234;
 	public HL7ProcessingContext(boolean autoAck, boolean validateMessage,boolean publisherEnabled ,
 			String conformanceProfileURL, String messagePreprocessorClass,String serverUrl,String secureServerUrl, String serverPassword, String serverUsername,
             boolean passThroughInvalidMessages, boolean buildRawMessages) throws HL7Exception {
@@ -300,7 +301,6 @@ public class HL7ProcessingContext {
         msgCtx.setProperty(HL7Constants.HL7_PASS_THROUGH_INVALID_MESSAGES, isPassThroughInvalidMessages());
         msgCtx.setProperty(HL7Constants.HL7_BUILD_RAW_MESSAGE, isBuildRawMessages());
         publishMessage(message,msgCtx);
-
         try {
             msgCtx.setProperty(HL7Constants.HL7_RAW_MESSAGE_PROPERTY_NAME, message.encode());
         } catch (HL7Exception e) {
@@ -311,13 +311,18 @@ public class HL7ProcessingContext {
     public void publishMessage(Message message, MessageContext msgCtx) {
            if (isPublisherEnabled()) {
             try {
-                hl7PublisherConfig = new HL7MessagePublisherConfig();
+				PrivilegedCarbonContext.startTenantFlow();
+				PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(-1234, true);
+				hl7PublisherConfig = new HL7MessagePublisherConfig();
                 MessageData messageData = hl7PublisherConfig.createMessage(message, msgCtx);
                 eventPublisher.publish(messageData);
             } catch (HL7Exception e) {
                 log.error("Error in publishing the message", e);
-            }
-        }
+            }finally {
+				PrivilegedCarbonContext.endTenantFlow();
+			}
+		}
+
     }
 
     public Message createAck(Message hl7Msg) throws HL7Exception {

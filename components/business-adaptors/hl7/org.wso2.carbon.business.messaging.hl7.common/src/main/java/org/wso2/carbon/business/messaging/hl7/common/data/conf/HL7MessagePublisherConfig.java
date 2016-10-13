@@ -159,4 +159,29 @@ public class HL7MessagePublisherConfig {
     	
     	return serverName;
     }
+
+    public MessageData createACK(Message hl7msg,MessageContext ctx) throws HL7Exception {
+        MessageData messageData = new MessageData();
+        Map<String, String> extractedValues = createCustomMap(hl7msg);
+        messageData.setExtractedValues(extractedValues);
+        messageData.setPayload(hl7msg.encode());
+        messageData.setOpName(ctx.getAxisOperation().getName().getLocalPart());
+        messageData.setServiceName(ctx.getAxisService().getName());
+        messageData.setMsgDirection(HL7Constants.IN_DIRECTION);
+        messageData.setServerName(getServerName());
+        Terser terser = new Terser(hl7msg);
+        String activityId = terser.get("/MSH-10");
+
+        if(activityId !=null){
+            messageData.setActivityId(activityId);
+        }else{
+            messageData.setActivityId(String.valueOf(System.nanoTime()) + Math.round(Math.random() * HL7Constants.ACTIVITY_ID_GEN));
+        }
+
+        messageData.setStatus((String) ctx.getProperty(HL7Constants.HL7_DEFAULT_VALIDATION_PASSED));
+        messageData.setHost(PublisherUtil.getHostAddress());
+        messageData.setTimestamp(System.currentTimeMillis());
+        messageData.setType(HL7Constants.TRANSPORT_NAME);
+        return messageData;
+    }
 }

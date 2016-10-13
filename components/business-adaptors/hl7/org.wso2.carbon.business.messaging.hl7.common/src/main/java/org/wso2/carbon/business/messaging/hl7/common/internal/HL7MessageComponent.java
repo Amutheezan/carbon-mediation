@@ -2,7 +2,6 @@ package org.wso2.carbon.business.messaging.hl7.common.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.stream.core.EventStreamService;
 
 /**
@@ -15,23 +14,6 @@ public class HL7MessageComponent {
 
     private static final Log log = LogFactory.getLog(HL7MessageComponent.class);
     private static EventStreamService eventStreamService;
-
-    protected void activate(ComponentContext ctxt) {
-        if (log.isDebugEnabled()) {
-            log.debug("Activating the tasks");
-        }
-        try {
-        } catch (Exception e) {
-            log.error("HL7MessageComponent activation error.", e);
-        }
-    }
-
-    protected void deactivate(ComponentContext ctxt) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("HL7 Services task bundle is deactivated ");
-        }
-    }
 
     protected void setEventStreamService(EventStreamService eventStreamService) {
         HL7MessageComponent.eventStreamService = eventStreamService;

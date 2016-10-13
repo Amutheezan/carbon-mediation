@@ -120,8 +120,9 @@ public class HL7Constants {
 	public static final String HL7_APPLICATION_ACK  = "HL7_APPLICATION_ACK";
 
     public static final String HL7_MESSAGE_CHARSET = "HL7_MESSAGE_CHARSET";
-			
-	public static final class MessageType {
+    public static final String IN_DIRECTION = "in";
+
+    public static final class MessageType {
 		
 		public static final String V2X = "V2X";
 		

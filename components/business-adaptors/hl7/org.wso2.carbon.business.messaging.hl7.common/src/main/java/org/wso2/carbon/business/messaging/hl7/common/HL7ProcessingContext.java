@@ -326,12 +326,23 @@ public class HL7ProcessingContext {
     }
 
 public Message createAck(Message hl7Msg) throws HL7Exception {
-	try {
+	try{
 		return hl7Msg.generateACK();
 	} catch (IOException e) {
 		throw new HL7Exception(e);
 	}
 }
+
+	public Message createAck(Message hl7Msg,MessageContext ctx) throws HL7Exception {
+		try{
+			MessageData ack=hl7PublisherConfig.createACK(hl7Msg.generateACK(),ctx);
+			eventPublisher.publish(ack);
+			return hl7Msg.generateACK();
+		} catch (IOException e) {
+			throw new HL7Exception(e);
+		}
+	}
+
 	public Message createNack(Message hl7Msg, String errorMsg) throws HL7Exception {
 		if (errorMsg == null) {
 			errorMsg = "";
@@ -363,7 +374,7 @@ public Message createAck(Message hl7Msg) throws HL7Exception {
 		if (resultMode != null) {
 			return handleAutoAckNack(resultMode,ctx,hl7Msg);
 		} else if (this.isAutoAck()) {
-			return this.createAck(hl7Msg);
+			return this.createAck(hl7Msg,ctx);
 		}
 		/*
 		 * no one ACKed or NACKed, want to create a application ACK message so we
@@ -398,7 +409,7 @@ public Message createAck(Message hl7Msg) throws HL7Exception {
 
                     applicationResponses.clear();
                 }
-                msg = this.createAck(hl7Msg);
+                msg = this.createAck(hl7Msg,ctx);
                return msg;
 				//return null;
             } else {
@@ -406,7 +417,7 @@ public Message createAck(Message hl7Msg) throws HL7Exception {
                         .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
                 Message requesthl7message = xmlPayloadToHL7Message(requestMessageCtx);
-				msg = this.createAck(requesthl7message);
+				msg = this.createAck(requesthl7message,requestMessageCtx);
                applicationResponses.offer(msg);
             }
         } else if (HL7Constants.HL7_RESULT_MODE_NACK.equals(resultMode)) {

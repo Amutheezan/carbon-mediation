@@ -92,7 +92,6 @@ public class HL7ProcessingContext {
     private HL7EventPublisher  eventPublisher;
 
 
-	private int tenantId = -1234;
 	public HL7ProcessingContext(boolean autoAck, boolean validateMessage,boolean publisherEnabled ,
 			String conformanceProfileURL, String messagePreprocessorClass,String serverUrl,String secureServerUrl, String serverPassword, String serverUsername,
             boolean passThroughInvalidMessages, boolean buildRawMessages) throws HL7Exception {
@@ -309,10 +308,11 @@ public class HL7ProcessingContext {
 	}
 
     public void publishMessage(Message message, MessageContext msgCtx) {
+		int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
            if (isPublisherEnabled()) {
             try {
 				PrivilegedCarbonContext.startTenantFlow();
-				PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(-1234, true);
+				PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
 				hl7PublisherConfig = new HL7MessagePublisherConfig();
                 MessageData messageData = hl7PublisherConfig.createMessage(message, msgCtx);
                 eventPublisher.publish(messageData);

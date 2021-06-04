@@ -2366,7 +2366,7 @@
         <commons.vfs.version>2.0-wso2v15-SNAPSHOT</commons.vfs.version>
         <httpcore.nio.version>4.3.3</httpcore.nio.version>
         <httpcore.version>4.3.3</httpcore.version>
-        <httpclient.version>4.3.2</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpasyncclient.version>4.0-beta3</httpasyncclient.version>
 
         <!--Misc-->
